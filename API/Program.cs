@@ -41,6 +41,23 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.Use(async (context, next) =>
+{
+    try
+    {
+        var sw = Stopwatch.StartNew();
+        await next(context);
+        sw.Stop();
+
+        Log.Information($"Elapsed time: {sw.ElapsedMilliseconds} ms");
+    }
+    catch (Exception e)
+    {
+        Log.Error(e, "An error has ocurred");
+        throw;
+    }
+});
+
 app.UseAuthorization();
 
 app.MapControllers();
