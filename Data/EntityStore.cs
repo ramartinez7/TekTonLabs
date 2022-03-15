@@ -26,34 +26,49 @@ namespace Data
         }
 
         /// <summary>
+        ///     Get entity set
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IEnumerable<TEntity>> GetAsync()
+        {
+            return await DbEntitySet.ToListAsync();
+        }
+
+        /// <summary>
         ///     FindAsync an entity by ID
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public Task<TEntity> GetByIdAsync(object id)
+        public virtual async Task<TEntity> GetByIdAsync(object id)
         {
-            return DbEntitySet.FindAsync(id).AsTask();
+            return await DbEntitySet.FindAsync(id);
         }
 
         /// <summary>
         ///     Insert an entity
         /// </summary>
         /// <param name="entity"></param>
-        public Task<EntityEntry<TEntity>> CreateAsync(TEntity entity)
+        public virtual async Task<TEntity> CreateAsync(TEntity entity)
         {
-            return DbEntitySet.AddAsync(entity).AsTask();
+            var value = await DbEntitySet.AddAsync(entity).AsTask();
+            await Context.SaveChangesAsync();
+            return value.Entity;
         }
 
         /// <summary>
         ///     Update an entity
         /// </summary>
         /// <param name="entity"></param>
-        public void Update(TEntity entity)
+        public virtual async Task<TEntity> UpdateAsync(TEntity entity)
         {
             if (entity != null)
             {
                 Context.Entry(entity).State = EntityState.Modified;
+                await Context.SaveChangesAsync();
+                return entity;
             }
+
+            return null;
         }
     }
 }

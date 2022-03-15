@@ -7,8 +7,9 @@ namespace Data
     {
         DbContext Context { get; }
         IQueryable<TEntity> EntitySet();
-        Task<EntityEntry<TEntity>> CreateAsync(TEntity entity);
+        Task<IEnumerable<TEntity>> GetAsync();
+        Task<TEntity> CreateAsync(TEntity entity);
         Task<TEntity> GetByIdAsync(object id);
-        void Update(TEntity entity);
+        Task<TEntity> UpdateAsync(TEntity entity);
     }
 }

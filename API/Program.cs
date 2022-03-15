@@ -26,6 +26,7 @@ services.AddDbContext<DatabaseContext>(options =>
 });
 services.AddScoped(typeof(IEntityStore<>), typeof(EntityStore<>));
 services.AddScoped<IOrderItemsStore, OrderItemsStore>();
+services.AddScoped<IEntityStore<Models.Order>, OrderStore>();
 services.AddMediatR(typeof(MediatRReferencePoint).Assembly);
 
 builder.Logging.AddSerilog();
@@ -44,7 +45,6 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
-
 
 try
 {

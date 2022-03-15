@@ -27,19 +27,19 @@ namespace API.Controllers
         }
 
         // GET api/<OrderItemController>/5
-        [HttpGet("{id}")]
-        public async Task<GetOrderItemsByOrderIdDto> Get(int id)
-        {
-            (Order order, List<Product> items) = await Mediator.Send(new GetOrderItemsByOrderIdQuery(id));
+        //[HttpGet("{id}")]
+        //public async Task<GetOrderItemsByOrderIdDto> Get(int id)
+        //{
+        //    (Order order, List<Product> items) = await Mediator.Send(new GetOrderItemsByOrderIdQuery(id));
             
-            var result = new GetOrderItemsByOrderIdDto
-            {
-                Order = order,
-                Items = items
-            };
+        //    var result = new GetOrderItemsByOrderIdDto
+        //    {
+        //        Order = order,
+        //        Items = items
+        //    };
 
-            return result;
-        }
+        //    return result;
+        //}
 
         // POST api/<OrderItemController>
         [HttpPost]
