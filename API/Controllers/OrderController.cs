@@ -57,11 +57,13 @@ namespace API.Controllers
             return Ok(items);
         }
 
+        public record OrderDto(DateTime Date);
+
         // POST api/<OrderController>
         [HttpPost]
-        public async Task<ActionResult<Order>> Post([FromBody] DateTime date)
+        public async Task<ActionResult<Order>> Post([FromBody] OrderDto value)
         {
-            var order = await Mediator.Send(new Mediator.Commands.Order.CreateCommand(new Order { Date = date }));
+            var order = await Mediator.Send(new Mediator.Commands.Order.CreateCommand(new Order { Date = value.Date }));
 
             return CreatedAtAction(nameof(Get), new { id = order.Id }, order);
         }
