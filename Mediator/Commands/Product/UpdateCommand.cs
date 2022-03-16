@@ -7,5 +7,5 @@ using System.Threading.Tasks;
 
 namespace Mediator.Commands.Product
 {
-    public record UpdateCommand(Models.Product product) : IRequest<Models.Product> { }
+    public record UpdateCommand(Models.Product Product) : IRequest<Models.Product> { }
 }
