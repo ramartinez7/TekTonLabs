@@ -15,6 +15,6 @@ namespace Models
         [Required]
         public DateTime Date { get; set; }
         [JsonIgnore]
-        public ICollection<OrderItems> Items { get; set; }
+        public ICollection<OrderItem> Items { get; set; }
     }
 }

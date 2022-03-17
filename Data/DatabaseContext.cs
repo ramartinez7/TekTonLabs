@@ -17,10 +17,13 @@ namespace Data
 
         public virtual DbSet<Order> Orders { get; set; }
         public virtual DbSet<Product> Products { get; set; }
-        public virtual DbSet<OrderItems> OrderItems { get; set; }
+        public virtual DbSet<OrderItem> OrderItems { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            builder.Entity<OrderItem>()
+                .HasIndex(p => new { p.OrderId, p.ProductId }).IsUnique(); // This combination should be unique // InMemory will allow you to save data that would violate referential integrity constraints in a relational database. Taken from: https://stackoverflow.com/questions/52259580/adding-a-unique-index-on-ef-core-mapping-does-not-seem-to-work
+
             builder.Entity<Order>().HasData(new List<Order>()
             {
                 new Order()
@@ -62,16 +65,16 @@ namespace Data
                 }
             });
 
-            builder.Entity<OrderItems>().HasData(new List<OrderItems>()
+            builder.Entity<OrderItem>().HasData(new List<OrderItem>()
             {
-                new OrderItems()
+                new OrderItem()
                 {
                     Id = 1, 
                     OrderId = 1,
                     ProductId = 1,
                     ProductQuantity = 23
                 },
-                new OrderItems()
+                new OrderItem()
                 {
                     Id = 2,
                     OrderId = 1,

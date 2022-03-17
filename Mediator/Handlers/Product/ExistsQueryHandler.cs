@@ -9,18 +9,18 @@ using System.Threading.Tasks;
 
 namespace Mediator.Handlers.Product
 {
-    public class GetHandler : IRequestHandler<GetQuery, IEnumerable<Models.Product>>
+    public class ExistsQueryHandler : IRequestHandler<Mediator.Queries.Product.ExistsQuery, bool>
     {
         public IEntityStore<Models.Product, int> Store { get; }
 
-        public GetHandler(IEntityStore<Models.Product, int> store)
+        public ExistsQueryHandler(IEntityStore<Models.Product, int> store)
         {
             Store = store;
         }
 
-        public async Task<IEnumerable<Models.Product>> Handle(GetQuery request, CancellationToken cancellationToken)
+        public async Task<bool> Handle(ExistsQuery request, CancellationToken cancellationToken)
         {
-            return await Store.GetAsync();
+            return await Store.ExistsAsync(request.Id);
         }
     }
 }

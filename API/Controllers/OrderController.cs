@@ -30,17 +30,11 @@ namespace API.Controllers
 
         // GET api/order/5
         [HttpGet("{id}")]
-        public async Task<ActionResult> Get(int id)
+        [ResourceExists(typeof(Order), typeof(int), "id")]
+        public async Task<ActionResult> GetById(int id)
         {
             var order = await Mediator.Send(new Mediator.Queries.Order.GetByIdQuery(id));
-
-            if (order is null)
-            {
-                return NotFound();
-            }
-
-            var items = order.Items?.Select(i => i.Product).ToList();
-
+            var items = order.Items?.Select(i => new { OrderItemId = i.Id, i.Product }).ToList();
             object additionalData = new();
 
             if (Cache.TryGetValue("CompanyName", out string CompanyName) && Cache.TryGetValue("CompanyAddress", out string CompanyAddress))
@@ -53,6 +47,7 @@ namespace API.Controllers
 
         // GET api/<OrderController>/5/product
         [HttpGet("{id}/product")]
+        [ResourceExists(typeof(Order), typeof(int), "id")]
         public async Task<ActionResult> GetProductsById(int id)
         {
             var order = await Mediator.Send(new Mediator.Queries.Order.GetByIdQuery(id));
@@ -80,6 +75,7 @@ namespace API.Controllers
 
         // PUT api/<OrderController>/5
         [HttpPut("{id}")]
+        [ResourceExists(typeof(Order), typeof(int), "id")]
         public async Task<ActionResult<Order>> Put(int id, [FromBody] Order order)
         {
             if (id != order.Id)

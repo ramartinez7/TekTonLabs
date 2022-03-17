@@ -15,10 +15,10 @@ namespace Data
 
         }
 
-        public override Task<Order> GetByIdAsync(object id)
+        public override Task<Order> GetByIdAsync(int id)
         {
             var query = this.EntitySet()
-                .Where(o => o.Id == (int)id)
+                .Where(o => o.Id.Equals(id))
                 .Include(o => o.Items)
                 .ThenInclude(i => i.Product);
 

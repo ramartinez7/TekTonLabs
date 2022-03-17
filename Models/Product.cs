@@ -19,6 +19,6 @@ namespace Models
         [Required(AllowEmptyStrings = false)]
         public double Price { get; set; }
         [JsonIgnore]
-        public ICollection<OrderItems> Items { get; set; }
+        public ICollection<OrderItem> Items { get; set; }
     }
 }

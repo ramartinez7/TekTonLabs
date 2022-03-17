@@ -10,10 +10,10 @@ namespace Data
 {
     public class OrderItemsStore : IOrderItemsStore
     {
-        private readonly IEntityStore<Order> OrderStore;
-        private readonly IEntityStore<OrderItems> _OrderItemsStore;
+        private readonly IEntityStore<Order, int> OrderStore;
+        private readonly IEntityStore<OrderItem, int> _OrderItemsStore;
 
-        public OrderItemsStore(IEntityStore<Order> orderStore, IEntityStore<OrderItems> orderItemsStore)
+        public OrderItemsStore(IEntityStore<Order, int> orderStore, IEntityStore<OrderItem, int> orderItemsStore)
         {
             OrderStore = orderStore;
             _OrderItemsStore = orderItemsStore;

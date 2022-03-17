@@ -2,6 +2,7 @@
 using Mediator.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Models;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -19,44 +20,44 @@ namespace API.Controllers
             Mediator = mediator;
         } 
 
-        // GET: api/<OrderItemController>
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
-
-        // GET api/<OrderItemController>/5
-        //[HttpGet("{id}")]
-        //public async Task<GetOrderItemsByOrderIdDto> Get(int id)
-        //{
-        //    (Order order, List<Product> items) = await Mediator.Send(new GetOrderItemsByOrderIdQuery(id));
-            
-        //    var result = new GetOrderItemsByOrderIdDto
-        //    {
-        //        Order = order,
-        //        Items = items
-        //    };
-
-        //    return result;
-        //}
+        public record OrderItemDto(int OrderId, int ProductId, double ProductQuantity);
 
         // POST api/<OrderItemController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<OrderItem> Post([FromBody] OrderItemDto value)
         {
-        }
+            try
+            {
+                var orderItem = await Mediator.Send(
+                        new Mediator.Commands.OrderItem.AddOrderItemCommand(
+                            new OrderItem
+                            {
+                                OrderId = value.OrderId,
+                                ProductId = value.ProductId,
+                                ProductQuantity = value.ProductQuantity
+                            })
+                        );
 
-        // PUT api/<OrderItemController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
+                return orderItem;
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new HttpRequestException("Something ocurred at a database level", ex, System.Net.HttpStatusCode.InternalServerError);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         // DELETE api/<OrderItemController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        [ResourceExists(typeof(OrderItem), typeof(int), "id")]
+        public async Task<bool> Delete(int id)
         {
+            var result = await Mediator.Send(new Mediator.Commands.OrderItem.DeleteOrderItemCommand(id));
+
+            return result;
         }
     }
 }

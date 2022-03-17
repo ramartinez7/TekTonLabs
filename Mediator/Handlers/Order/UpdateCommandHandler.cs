@@ -11,9 +11,9 @@ namespace Mediator.Handlers.Order
 {
     public class UpdateCommandHandler : IRequestHandler<UpdateCommand, Models.Order>
     {
-        public IEntityStore<Models.Order> Store { get; }
+        public IEntityStore<Models.Order, int> Store { get; }
 
-        public UpdateCommandHandler(IEntityStore<Models.Order> store)
+        public UpdateCommandHandler(IEntityStore<Models.Order, int> store)
         {
             Store = store;
         }

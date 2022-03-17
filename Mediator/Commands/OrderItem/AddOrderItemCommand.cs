@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,5 +8,5 @@ using System.Threading.Tasks;
 
 namespace Mediator.Commands.OrderItem
 {
-    public record AddOrderItemCommand(int OrderId, int ProductID) : IRequest<Models.OrderItems> { }
+    public record AddOrderItemCommand(Models.OrderItem OrderItem) : IRequest<Models.OrderItem> { }
 }

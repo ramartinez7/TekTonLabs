@@ -26,6 +26,7 @@ namespace API.Controllers
 
         // GET api/<ProductController>/5
         [HttpGet("{id}")]
+        [ResourceExists(typeof(Product), typeof(int), "id")]
         public async Task<ActionResult<Product>> Get(int id)
         {
             var product = await Mediator.Send(new Mediator.Queries.Product.GetByIdQuery(id));
@@ -51,6 +52,7 @@ namespace API.Controllers
 
         // PUT api/<ProductController>/5
         [HttpPut("{id}")]
+        [ResourceExists(typeof(Product), typeof(int), "id")]
         public async Task<ActionResult> Put(int id, [FromBody] Product product)
         {
             if (id != product.Id)

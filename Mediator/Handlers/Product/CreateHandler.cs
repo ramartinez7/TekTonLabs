@@ -11,9 +11,9 @@ namespace Mediator.Handlers.Product
 {
     public class CreateHandler : IRequestHandler<Mediator.Commands.Product.CreateCommand, Models.Product>
     {
-        public IEntityStore<Models.Product> Store { get; }
+        public IEntityStore<Models.Product, int> Store { get; }
 
-        public CreateHandler(IEntityStore<Models.Product> store)
+        public CreateHandler(IEntityStore<Models.Product, int> store)
         {
             Store = store;
         }

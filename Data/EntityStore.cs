@@ -35,9 +35,14 @@ namespace Data
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public virtual async Task<TEntity> GetByIdAsync(object id)
+        public virtual async Task<TEntity> GetByIdAsync(TKey id)
         {
             return await DbEntitySet.FindAsync(id);
+        }
+
+        public virtual async Task<bool> ExistsAsync(TKey id)
+        {
+            return await DbEntitySet.AnyAsync(ent => ent.Id.Equals(id));
         }
 
         /// <summary>
@@ -57,7 +62,7 @@ namespace Data
         /// <param name="entity"></param>
         public virtual async Task<TEntity> UpdateAsync(TEntity entity)
         {
-            if (entity != null)
+            if (entity != null && await ExistsAsync(entity.Id))
             {
                 Context.Entry(entity).State = EntityState.Modified;
                 await Context.SaveChangesAsync();
@@ -70,7 +75,7 @@ namespace Data
         /// <summary>
         ///     Delete an entity
         /// </summary>
-        /// <param name="entity"></param>
+        /// <param name="id"></param>
         public virtual bool DeleteAsync(TKey id)
         {
             var entity = Activator.CreateInstance<TEntity>();
@@ -81,6 +86,7 @@ namespace Data
             if (entity is not null)
             {
                 DbEntitySet.Remove(entity);
+                Context.SaveChanges();
                 return true;
             }
 

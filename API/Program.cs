@@ -2,6 +2,7 @@ using API;
 using Data;
 using Mediator;
 using MediatR;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Serilog;
@@ -23,7 +24,7 @@ services.AddSwaggerGen();
 
 services.AddDbContext<DatabaseContext>(options =>
 {
-    options.UseInMemoryDatabase("TekTonLabs");
+    options.UseInMemoryDatabase("TekTonLabs Inc.");
 });
 services.AddScoped(typeof(IEntityStore<,>), typeof(EntityStore<,>));
 services.AddScoped<IOrderItemsStore, OrderItemsStore>();
@@ -33,6 +34,7 @@ services.AddMemoryCache(options =>
 {
     options.ExpirationScanFrequency = TimeSpan.FromMinutes(1);
 });
+services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 builder.Logging.AddSerilog();
 

@@ -4,5 +4,6 @@ namespace Data
 {
     public interface IOrderStore : IEntityStore<Order, int>
     {
+        
     }
 }
