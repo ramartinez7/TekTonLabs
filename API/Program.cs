@@ -5,7 +5,9 @@ using MediatR;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Net.Http.Headers;
 using Serilog;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -35,6 +37,18 @@ services.AddMemoryCache(options =>
     options.ExpirationScanFrequency = TimeSpan.FromMinutes(1);
 });
 services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+builder.Services.AddOptions<RetoolAPI>()
+    .Bind(configuration.GetSection(RetoolAPI.SectionName))
+    .ValidateDataAnnotations();
+
+builder.Services.AddHttpClient("RetoolAPI", client =>
+{
+    var apiConfig = configuration.GetSection(RetoolAPI.SectionName).Get<RetoolAPI>();
+    client.BaseAddress = new Uri(apiConfig.BaseAddress);
+    client.DefaultRequestHeaders.Accept.Clear();
+    client.DefaultRequestHeaders.Add(HeaderNames.Accept, "application/json");
+});
 
 builder.Logging.AddSerilog();
 
@@ -73,3 +87,10 @@ finally
 {
     Log.CloseAndFlush();
 }
+
+public class RetoolAPI
+{
+    public const string SectionName = "RetoolAPI";
+    [Required(AllowEmptyStrings = false)]
+    public string BaseAddress { get; set; }
+};

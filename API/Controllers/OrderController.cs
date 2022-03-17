@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options;
 using Models;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -13,6 +14,7 @@ namespace API.Controllers
     {
         public IMediator Mediator { get; }
         public IMemoryCache Cache { get; }
+        public IHttpClientFactory HttpClientFactory { get; }
 
         public OrderController(IMediator mediator, IMemoryCache cache)
         {
