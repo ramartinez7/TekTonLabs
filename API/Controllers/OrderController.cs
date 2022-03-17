@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using Models;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -11,10 +12,12 @@ namespace API.Controllers
     public class OrderController : ControllerBase
     {
         public IMediator Mediator { get; }
+        public IMemoryCache Cache { get; }
 
-        public OrderController(IMediator mediator)
+        public OrderController(IMediator mediator, IMemoryCache cache)
         {
             Mediator = mediator;
+            Cache = cache;
         }
 
         // GET: api/order
@@ -38,7 +41,14 @@ namespace API.Controllers
 
             var items = order.Items?.Select(i => i.Product).ToList();
 
-            return Ok(new { order, items });
+            object additionalData = new();
+
+            if (Cache.TryGetValue("CompanyName", out string CompanyName) && Cache.TryGetValue("CompanyAddress", out string CompanyAddress))
+            {
+                additionalData = new { CompanyName, CompanyAddress };
+            }
+
+            return Ok(new { order, additionalData, items });
         }
 
         // GET api/<OrderController>/5/product

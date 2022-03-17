@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Data
 {
-    public class OrderStore : EntityStore<Order>, IOrderStore
+    public class OrderStore : EntityStore<Order, int>, IOrderStore
     {
         public OrderStore(DatabaseContext context) : base(context)
         {

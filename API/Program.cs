@@ -3,6 +3,7 @@ using Data;
 using Mediator;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Serilog;
 using System.Diagnostics;
 
@@ -24,14 +25,25 @@ services.AddDbContext<DatabaseContext>(options =>
 {
     options.UseInMemoryDatabase("TekTonLabs");
 });
-services.AddScoped(typeof(IEntityStore<>), typeof(EntityStore<>));
+services.AddScoped(typeof(IEntityStore<,>), typeof(EntityStore<,>));
 services.AddScoped<IOrderItemsStore, OrderItemsStore>();
-services.AddScoped<IEntityStore<Models.Order>, OrderStore>();
+services.AddScoped<IEntityStore<Models.Order, int>, OrderStore>();
 services.AddMediatR(typeof(MediatRReferencePoint).Assembly);
+services.AddMemoryCache(options =>
+{
+    options.ExpirationScanFrequency = TimeSpan.FromMinutes(1);
+});
 
 builder.Logging.AddSerilog();
 
 var app = builder.Build();
+
+app.Lifetime.ApplicationStarted.Register(() =>
+{
+    var cache = app.Services.GetRequiredService<IMemoryCache>();
+    cache.Set("CompanyName", "TekTon Labs Inc.");
+    cache.Set("CompanyAddress", "800 W El Camino Real Suite 180, Mountain View, CA 94040, United States");
+});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

@@ -11,12 +11,12 @@ namespace Mediator.Handlers.Order
 {
     internal class CreateCommandHandler : IRequestHandler<CreateCommand, Models.Order>
     {
-        public CreateCommandHandler(IEntityStore<Models.Order> store)
+        public IEntityStore<Models.Order, int> Store { get; }
+
+        public CreateCommandHandler(IEntityStore<Models.Order, int> store)
         {
             Store = store;
         }
-
-        public IEntityStore<Models.Order> Store { get; }
 
         public async Task<Models.Order> Handle(CreateCommand request, CancellationToken cancellationToken)
         {

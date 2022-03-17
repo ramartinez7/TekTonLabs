@@ -2,7 +2,7 @@
 
 namespace Data
 {
-    public interface IOrderStore : IEntityStore<Order>
+    public interface IOrderStore : IEntityStore<Order, int>
     {
     }
 }

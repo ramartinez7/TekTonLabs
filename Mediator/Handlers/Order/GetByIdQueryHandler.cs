@@ -11,9 +11,9 @@ namespace Mediator.Handlers.Order
 {
     public class GetByIdQueryHandler : IRequestHandler<GetByIdQuery, Models.Order>
     {
-        public IEntityStore<Models.Order> Store { get; }
+        public IEntityStore<Models.Order, int> Store { get; }
 
-        public GetByIdQueryHandler(IEntityStore<Models.Order> store)
+        public GetByIdQueryHandler(IEntityStore<Models.Order, int> store)
         {
             Store = store;
         }

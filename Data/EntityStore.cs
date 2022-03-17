@@ -1,15 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Data
 {
-    public class EntityStore<TEntity> : IEntityStore<TEntity> where TEntity : class
+    public class EntityStore<TEntity, TKey> : IEntityStore<TEntity, TKey>
+        where TEntity : class, IEntity<TKey>
+        where TKey : IEquatable<TKey>
     {
         public DbContext Context { get; private set; }
         private DbSet<TEntity> DbEntitySet { get; set; }
@@ -69,6 +65,26 @@ namespace Data
             }
 
             return null;
+        }
+
+        /// <summary>
+        ///     Delete an entity
+        /// </summary>
+        /// <param name="entity"></param>
+        public virtual bool DeleteAsync(TKey id)
+        {
+            var entity = Activator.CreateInstance<TEntity>();
+            entity.Id = id;
+
+            DbEntitySet.Attach(entity);
+
+            if (entity is not null)
+            {
+                DbEntitySet.Remove(entity);
+                return true;
+            }
+
+            return false;
         }
     }
 }

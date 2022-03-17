@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Models
 {
-    public class Order
+    public class Order : IEntity<int>
     {
         [Key]
         public int Id { get; set; }
