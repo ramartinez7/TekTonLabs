@@ -52,7 +52,7 @@ namespace API.Controllers
 
         // DELETE api/<OrderItemController>/5
         [HttpDelete("{id}")]
-        [ResourceExists(typeof(OrderItem), typeof(int), "id")]
+        [ResourceExists(typeof(OrderItem), "id")]
         public async Task<bool> Delete(int id)
         {
             var result = await Mediator.Send(new Mediator.Commands.OrderItem.DeleteOrderItemCommand(id));
