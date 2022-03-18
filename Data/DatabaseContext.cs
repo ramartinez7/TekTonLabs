@@ -77,8 +77,8 @@ namespace Data
                 new OrderItem()
                 {
                     Id = 2,
-                    OrderId = 1,
-                    ProductId = 2,
+                    OrderId = 2,
+                    ProductId = 1,
                     ProductQuantity = 14
                 }
             });

@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using Data.ExternalData;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
@@ -14,12 +15,14 @@ namespace API.Controllers
     {
         public IMediator Mediator { get; }
         public IMemoryCache Cache { get; }
+        public IProductsDataFromExternalSource ProductsDataFromExternalSource { get; }
         public IHttpClientFactory HttpClientFactory { get; }
 
-        public OrderController(IMediator mediator, IMemoryCache cache)
+        public OrderController(IMediator mediator, IMemoryCache cache, IProductsDataFromExternalSource productsDataFromExternalSource)
         {
             Mediator = mediator;
             Cache = cache;
+            ProductsDataFromExternalSource = productsDataFromExternalSource;
         }
 
         // GET: api/order
@@ -37,14 +40,19 @@ namespace API.Controllers
         {
             var order = await Mediator.Send(new Mediator.Queries.Order.GetByIdQuery(id));
             var items = order.Items?.Select(i => new { OrderItemId = i.Id, i.Product }).ToList();
-            object additionalData = new();
 
             if (Cache.TryGetValue("CompanyName", out string CompanyName) && Cache.TryGetValue("CompanyAddress", out string CompanyAddress))
             {
-                additionalData = new { CompanyName, CompanyAddress };
+                order.AdditionalData = new() { CompanyName = CompanyName, CompanyAddress = CompanyAddress };
             }
 
-            return Ok(new { order, additionalData, items });
+            foreach (var item in items)
+            {
+                var productAdditionalData = await ProductsDataFromExternalSource.GetAsync(item.Product.Id);
+                item.Product.AdditionalData = productAdditionalData;
+            }            
+
+            return Ok(new { order, items });
         }
 
         // GET api/<OrderController>/5/product

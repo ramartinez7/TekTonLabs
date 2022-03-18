@@ -1,5 +1,6 @@
 using API;
 using Data;
+using Data.ExternalData;
 using Mediator;
 using MediatR;
 using Microsoft.Data.Sqlite;
@@ -9,6 +10,7 @@ using Microsoft.Net.Http.Headers;
 using Serilog;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
+using System.Net.Http.Headers;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -32,22 +34,24 @@ services.AddScoped(typeof(IEntityStore<,>), typeof(EntityStore<,>));
 services.AddScoped<IOrderItemsStore, OrderItemsStore>();
 services.AddScoped<IEntityStore<Models.Order, int>, OrderStore>();
 services.AddMediatR(typeof(MediatRReferencePoint).Assembly);
+services.AddScoped<IProductsDataFromExternalSource, ProductsDataFromExternalSource>();
 services.AddMemoryCache(options =>
 {
     options.ExpirationScanFrequency = TimeSpan.FromMinutes(1);
 });
 services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-builder.Services.AddOptions<RetoolAPI>()
-    .Bind(configuration.GetSection(RetoolAPI.SectionName))
+builder.Services.AddOptions<MockAPI>()
+    .Bind(configuration.GetSection(MockAPI.SectionName))
     .ValidateDataAnnotations();
 
-builder.Services.AddHttpClient("RetoolAPI", client =>
+builder.Services.AddHttpClient("MockAPI", client =>
 {
-    var apiConfig = configuration.GetSection(RetoolAPI.SectionName).Get<RetoolAPI>();
+    var apiConfig = configuration.GetSection(MockAPI.SectionName).Get<MockAPI>();
     client.BaseAddress = new Uri(apiConfig.BaseAddress);
     client.DefaultRequestHeaders.Accept.Clear();
-    client.DefaultRequestHeaders.Add(HeaderNames.Accept, "application/json");
+    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+    client.Timeout = TimeSpan.FromMilliseconds(apiConfig.TimeoutInMilliseconds);
 });
 
 builder.Logging.AddSerilog();
@@ -88,9 +92,10 @@ finally
     Log.CloseAndFlush();
 }
 
-public class RetoolAPI
+public class MockAPI
 {
-    public const string SectionName = "RetoolAPI";
+    public const string SectionName = "MockAPI";
     [Required(AllowEmptyStrings = false)]
     public string BaseAddress { get; set; }
+    public int TimeoutInMilliseconds { get; set; }
 };
