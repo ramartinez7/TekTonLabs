@@ -7,6 +7,7 @@ using System.Net;
 
 namespace API
 {
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
     public class ResourceExistsAttribute : TypeFilterAttribute
     {
         /// <summary>

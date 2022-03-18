@@ -27,7 +27,7 @@ namespace API.Controllers
         // GET api/<ProductController>/5
         [HttpGet("{id}")]
         [ResourceExists(typeof(Product), "id")]
-        public async Task<ActionResult<Product>> Get(int id)
+        public async Task<ActionResult<Product>> GetById(int id)
         {
             var product = await Mediator.Send(new Mediator.Queries.Product.GetByIdQuery(id));
 
