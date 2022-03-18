@@ -16,23 +16,10 @@ namespace Models
         [Required]
         public DateTime Date { get; set; }
         [NotMapped]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public OrderAdditionalData AdditionalData { get; set; }
+        [JsonIgnore]
         public ICollection<OrderItem> Items { get; set; }
-
-        public Order()
-        {
-            AdditionalData = new();
-        }
-
-        public bool ShouldSerializeAdditionalData()
-        {
-            return AdditionalData is not null;
-        }
-
-        public bool ShouldSerializeItems()
-        {
-            return Items is not null;
-        }
     }
 
     public class OrderAdditionalData

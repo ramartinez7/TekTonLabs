@@ -18,13 +18,10 @@ namespace Models
         public string Name { get; set; }
         [Required(AllowEmptyStrings = false)]
         public double Price { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public ProductAdditionalData AdditionalData { get; set; }
         [JsonIgnore]
         public ICollection<OrderItem> Items { get; set; }
 
-        public bool ShouldSerializeAdditionalData()
-        {
-            return AdditionalData is not null;
-        }
     }
 }
